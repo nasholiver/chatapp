@@ -6,6 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  createdAt DateTime @default(now())
+  receiver  Message[] @relation("receiver")
+  sender  Message[] @relation("sender")
+}
+model Message {
+  id        Int      @id @default(autoincrement())
+  text   String
+  receivedId Int
+  receiver    User     @relation(name: "receiver", fields: [receivedId],  references: [id])
+  senderId Int
+  sender    User     @relation(name: "sender", fields: [senderId],  references: [id])
+  createdAt DateTime @default(now())
 }
